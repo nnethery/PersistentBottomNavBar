@@ -38,7 +38,7 @@ class PersistentBottomNavBar extends StatelessWidget {
                         : confineToSafeArea ?? true,
                     child: Container(
                       color: this.navBarEssentials!.backgroundColor,
-                      height: this.navBarEssentials!.navBarHeight,
+                      // height: this.navBarEssentials!.navBarHeight,
                       child: this.customNavBarWidget,
                     ),
                   )
@@ -51,7 +51,7 @@ class PersistentBottomNavBar extends StatelessWidget {
                             ? false
                             : confineToSafeArea ?? true,
                         child: Container(
-                            height: this.navBarEssentials!.navBarHeight,
+                            // height: this.navBarEssentials!.navBarHeight,
                             child: this.customNavBarWidget)),
                   )
             : this.navBarStyle == NavBarStyle.style15 ||

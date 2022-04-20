@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:provider/provider.dart';
 
+import 'MockChangeNotifier.dart';
 import 'modal-screen.dart';
 
 class MainScreen extends StatelessWidget {
@@ -123,6 +125,22 @@ class MainScreen extends StatelessWidget {
                     this.hideStatus
                         ? "Unhide Navigation Bar"
                         : "Hide Navigation Bar",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final changer =
+                        Provider.of<MockChangeNotifier>(context, listen: false);
+                    changer.isActive = !changer.isActive;
+                    changer.notify();
+                  },
+                  child: Text(
+                    this.hideStatus
+                        ? "Show the widget above the Navigation Bar"
+                        : "Hide the widget above the Navigation Bar",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:persistent_bottom_nav_bar_example_project/MockChangeNotifier.dart';
+import 'package:provider/provider.dart';
 
+import 'MockChangeNotifier.dart';
 import 'custom-widget-tabs.widget.dart';
 import 'modal-screen.dart';
 import 'screens.dart';
@@ -12,19 +15,22 @@ BuildContext testContext;
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Persistent Bottom Navigation Bar example project',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => MockChangeNotifier(),
+      child: MaterialApp(
+        title: 'Persistent Bottom Navigation Bar example project',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MainMenu(),
+        initialRoute: '/',
+        routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
+          '/first': (context) => MainScreen2(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
+          '/second': (context) => MainScreen3(),
+        },
       ),
-      home: MainMenu(),
-      initialRoute: '/',
-      routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        '/first': (context) => MainScreen2(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        '/second': (context) => MainScreen3(),
-      },
     );
   }
 }
@@ -294,6 +300,8 @@ class CustomNavBarWidget extends StatelessWidget {
   final List<PersistentBottomNavBarItem> items;
   final ValueChanged<int> onItemSelected;
 
+  MockChangeNotifier changer = MockChangeNotifier();
+
   CustomNavBarWidget({
     Key key,
     this.selectedIndex,
@@ -349,26 +357,43 @@ class CustomNavBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Container(
-        width: double.infinity,
-        height: kBottomNavigationBarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: items.map((item) {
-            int index = items.indexOf(item);
-            return Flexible(
-              child: GestureDetector(
-                onTap: () {
-                  this.onItemSelected(index);
-                },
-                child: _buildItem(item, selectedIndex == index),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
+    return Consumer<MockChangeNotifier>(
+      builder: (context, changerState, child) {
+        final bar = Container(
+          width: double.infinity,
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: items.map((item) {
+              int index = items.indexOf(item);
+              return Flexible(
+                child: GestureDetector(
+                  onTap: () {
+                    this.onItemSelected(index);
+                  },
+                  child: _buildItem(item, selectedIndex == index),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+
+        var widgets = List<Widget>.from([bar]);
+
+        final testContainer = Container(color: Colors.purple, height: 60);
+
+        if (changerState.isActive) {
+          widgets = List<Widget>.from([testContainer]) + widgets;
+        }
+
+        return Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widgets,
+          ),
+        );
+      },
     );
   }
 }
